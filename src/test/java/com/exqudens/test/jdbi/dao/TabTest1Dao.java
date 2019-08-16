@@ -17,9 +17,9 @@ public interface TabTest1Dao {
     @GetGeneratedKeys
     List<Long> insert(@BindBean List<TabTest1> entities);
 
-    @SqlQuery("select * from `db_test_1`.`tab_test_1`")
+    @SqlQuery("select * from `db_test_1`.`tab_test_1` where `id` in(<ids>)")
     @RegisterFieldMapper(TabTest1.class)
-    List<TabTest1> select();
+    List<TabTest1> select(@BindList("ids") List<Long> ids);
 
     @SqlBatch("insert into `db_test_1`.`tab_test_1`(`id`, `name`) values(:superId, :superName) on duplicate key update `id` = values(`id`), `name` = values(`name`)")
     void update(@BindBean List<TabTest1> entities);

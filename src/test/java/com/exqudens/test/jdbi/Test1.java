@@ -127,7 +127,6 @@ public class Test1 {
             Jdbi jdbi = Jdbi.create(dataSource);
             jdbi.installPlugin(new SqlObjectPlugin());
             jdbi.useHandle(handle -> {
-                handle.registerRowMapper(FieldMapper.factory(TabTest1.class));
                 System.out.println("---");
                 handle.execute("create database if not exists `db_test_1`");
                 handle.execute("create table if not exists `db_test_1`.`tab_test_1`(`id` bigint(20) unsigned not null auto_increment, `name` varchar(255), primary key(`id`))");
@@ -148,7 +147,7 @@ public class Test1 {
                 }
                 beans.stream().forEach(System.out::println);
                 System.out.println("---");
-                beans = tabTest1Dao.select();
+                beans = tabTest1Dao.select(ids);
                 beans.stream().forEach(System.out::println);
                 System.out.println("---");
                 for (int i = 0; i < beans.size(); i++) {
@@ -156,12 +155,12 @@ public class Test1 {
                 }
                 tabTest1Dao.update(beans);
                 System.out.println("---");
-                beans = tabTest1Dao.select();
+                beans = tabTest1Dao.select(ids);
                 beans.stream().forEach(System.out::println);
                 System.out.println("---");
                 tabTest1Dao.delete(ids);
                 System.out.println("---");
-                beans = tabTest1Dao.select();
+                beans = tabTest1Dao.select(ids);
                 beans.stream().forEach(System.out::println);
                 System.out.println("---");
             });
