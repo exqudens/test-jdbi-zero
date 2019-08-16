@@ -118,7 +118,7 @@ public class Test1 {
         }
     }
 
-    //@Ignore
+    @Ignore
     @Test
     public void test3() throws Throwable {
         LOGGER.trace("");
