@@ -38,16 +38,16 @@ public class Test1 {
                 System.out.println("---");
                 handle.createUpdate("truncate table `db_test_1`.`tab_test_1`").execute();
                 System.out.println("---");
-                rows = handle.createUpdate("insert into `db_test_1`.`tab_test_1`(`name`) values(?),(?)").bind(0, "aaa").bind(1, "bbb").executeAndReturnGeneratedKeys().mapToMap().list();
+                rows = handle.prepareBatch("insert into `db_test_1`.`tab_test_1`(`name`) values(?)").bind(0, "aaa").add().bind(0, "bbb").add().executeAndReturnGeneratedKeys().mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
                 rows = handle.createQuery("select * from `db_test_1`.`tab_test_1`").mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
                 handle
-                        .createUpdate("insert into `db_test_1`.`tab_test_1`(`id`, `name`) values(?, ?),(?, ?) on duplicate key update `id` = values(`id`), `name` = values(`name`)")
-                        .bind(0, 1L).bind(1, "yyy")
-                        .bind(2, 2L).bind(3, "zzz")
+                        .prepareBatch("insert into `db_test_1`.`tab_test_1`(`id`, `name`) values(?, ?) on duplicate key update `id` = values(`id`), `name` = values(`name`)")
+                        .bind(0, 1L).bind(1, "yyy").add()
+                        .bind(0, 2L).bind(1, "zzz").add()
                         .execute();
                 System.out.println("---");
                 rows = handle.createQuery("select * from `db_test_1`.`tab_test_1`").mapToMap().list();
