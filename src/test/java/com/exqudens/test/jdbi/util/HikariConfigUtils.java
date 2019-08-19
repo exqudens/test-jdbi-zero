@@ -4,19 +4,26 @@ import com.zaxxer.hikari.HikariConfig;
 
 public class HikariConfigUtils {
 
-    public static HikariConfig hikariConfig() {
+    public static HikariConfig hikariConfig(
+            String host,
+            String schema,
+            Integer port,
+            String username,
+            String password,
+            Boolean readOnly
+    ) {
         return hikariConfig(
                 "jdbc",
                 "mysql",
-                "localhost",
-                3306,
-                "",
-                "?rewriteBatchedStatements=true&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&characterSetResults=UTF-8&logger=com.mysql.cj.core.log.Slf4JLogger&profileSQL=true",
-                "root",
-                null,
+                host,
+                port,
+                schema,
+                "?createDatabaseIfNotExist=true&rewriteBatchedStatements=true&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull&characterEncoding=UTF-8&characterSetResults=UTF-8&logger=com.mysql.cj.core.log.Slf4JLogger&profileSQL=true",
+                username,
+                password,
                 "com.mysql.cj.jdbc.Driver",
                 40000L,
-                false,
+                readOnly,
                 1
         );
     }

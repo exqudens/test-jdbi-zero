@@ -31,42 +31,47 @@ public class Test1 {
     @Test
     public void test1() throws Throwable {
         LOGGER.trace("");
-        HikariConfig hikariConfig = HikariConfigUtils.hikariConfig();
+        String host = "localhost";
+        String schema = "db_test_1";
+        Integer port = 3306;
+        String username = "root";
+        String password = null;
+        Boolean readOnly = false;
+        HikariConfig hikariConfig = HikariConfigUtils.hikariConfig(host, schema, port, username, password, readOnly);
         try (HikariDataSource dataSource = new HikariDataSource(hikariConfig)) {
             Jdbi jdbi = Jdbi.create(dataSource);
             jdbi.useHandle(handle -> {
-                handle.execute("create database if not exists `db_test_1`");
-                handle.execute("create table if not exists `db_test_1`.`tab_test_1`(`id` bigint(20) unsigned not null auto_increment, `name` varchar(255), primary key(`id`))");
+                handle.execute("create table if not exists `tab_test_1`(`id` bigint(20) unsigned not null auto_increment, `name` varchar(255), primary key(`id`))");
                 System.out.println("---");
                 List<Map<String, Object>> rows = handle.createQuery("show databases").mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
-                rows = handle.createQuery("show tables from `db_test_1`").mapToMap().list();
+                rows = handle.createQuery("show tables").mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
-                handle.createUpdate("truncate table `db_test_1`.`tab_test_1`").execute();
+                handle.createUpdate("truncate table `tab_test_1`").execute();
                 System.out.println("---");
-                rows = handle.prepareBatch("insert into `db_test_1`.`tab_test_1`(`name`) values(?)").bind(0, "aaa").add().bind(0, "bbb").add().executeAndReturnGeneratedKeys().mapToMap().list();
+                rows = handle.prepareBatch("insert into `tab_test_1`(`name`) values(?)").bind(0, "aaa").add().bind(0, "bbb").add().executeAndReturnGeneratedKeys().mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
                 rows = handle.createQuery("select * from `db_test_1`.`tab_test_1`").mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
                 handle
-                        .prepareBatch("insert into `db_test_1`.`tab_test_1`(`id`, `name`) values(?, ?) on duplicate key update `id` = values(`id`), `name` = values(`name`)")
+                        .prepareBatch("insert into `tab_test_1`(`id`, `name`) values(?, ?) on duplicate key update `id` = values(`id`), `name` = values(`name`)")
                         .bind(0, 1L).bind(1, "yyy").add()
                         .bind(0, 2L).bind(1, "zzz").add()
                         .execute();
                 System.out.println("---");
-                rows = handle.createQuery("select * from `db_test_1`.`tab_test_1`").mapToMap().list();
+                rows = handle.createQuery("select * from `tab_test_1`").mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
                 handle
-                        .createUpdate("delete from `db_test_1`.`tab_test_1` where `id` in(?, ?)")
+                        .createUpdate("delete from `tab_test_1` where `id` in(?, ?)")
                         .bind(0, 1L).bind(1, 2L)
                         .execute();
                 System.out.println("---");
-                rows = handle.createQuery("select * from `db_test_1`.`tab_test_1`").mapToMap().list();
+                rows = handle.createQuery("select * from `tab_test_1`").mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
             });
@@ -77,37 +82,42 @@ public class Test1 {
     @Test
     public void test2() throws Throwable {
         LOGGER.trace("");
-        HikariConfig hikariConfig = HikariConfigUtils.hikariConfig();
+        String host = "localhost";
+        String schema = "db_test_1";
+        Integer port = 3306;
+        String username = "root";
+        String password = null;
+        Boolean readOnly = false;
+        HikariConfig hikariConfig = HikariConfigUtils.hikariConfig(host, schema, port, username, password, readOnly);
         try (HikariDataSource dataSource = new HikariDataSource(hikariConfig)) {
             Jdbi jdbi = Jdbi.create(dataSource);
             jdbi.installPlugin(new SqlObjectPlugin());
             jdbi.useHandle(handle -> {
                 handle.registerRowMapper(FieldMapper.factory(TabTest1.class));
                 System.out.println("---");
-                handle.execute("create database if not exists `db_test_1`");
-                handle.execute("create table if not exists `db_test_1`.`tab_test_1`(`id` bigint(20) unsigned not null auto_increment, `name` varchar(255), primary key(`id`))");
+                handle.execute("create table if not exists `tab_test_1`(`id` bigint(20) unsigned not null auto_increment, `name` varchar(255), primary key(`id`))");
                 System.out.println("---");
                 List<Map<String, Object>> rows = handle.createQuery("show databases").mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
-                rows = handle.createQuery("show tables from `db_test_1`").mapToMap().list();
+                rows = handle.createQuery("show tables").mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
-                handle.createUpdate("truncate table `db_test_1`.`tab_test_1`").execute();
+                handle.createUpdate("truncate table `tab_test_1`").execute();
                 System.out.println("---");
-                rows = handle.prepareBatch("insert into `db_test_1`.`tab_test_1`(`name`) values(:superName)").bindBean(new TabTest1(null, "aaa")).add().bindBean(new TabTest1(null, "bbb")).add().executeAndReturnGeneratedKeys().mapToMap().list();
+                rows = handle.prepareBatch("insert into `tab_test_1`(`name`) values(:superName)").bindBean(new TabTest1(null, "aaa")).add().bindBean(new TabTest1(null, "bbb")).add().executeAndReturnGeneratedKeys().mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
-                List<TabTest1> beans = handle.createQuery("select * from `db_test_1`.`tab_test_1`").mapTo(TabTest1.class).list();
+                List<TabTest1> beans = handle.createQuery("select * from `tab_test_1`").mapTo(TabTest1.class).list();
                 beans.stream().forEach(System.out::println);
                 System.out.println("---");
                 handle
-                        .prepareBatch("insert into `db_test_1`.`tab_test_1`(`id`, `name`) values(:superId, :superName) on duplicate key update `id` = values(`id`), `name` = values(`name`)")
+                        .prepareBatch("insert into `tab_test_1`(`id`, `name`) values(:superId, :superName) on duplicate key update `id` = values(`id`), `name` = values(`name`)")
                         .bindBean(new TabTest1(1L, "yyy")).add()
                         .bindBean(new TabTest1(2L, "zzz")).add()
                         .execute();
                 System.out.println("---");
-                beans = handle.createQuery("select * from `db_test_1`.`tab_test_1`").mapTo(TabTest1.class).list();
+                beans = handle.createQuery("select * from `tab_test_1`").mapTo(TabTest1.class).list();
                 beans.stream().forEach(System.out::println);
                 System.out.println("---");
             });
@@ -118,22 +128,27 @@ public class Test1 {
     @Test
     public void test3() throws Throwable {
         LOGGER.trace("");
-        HikariConfig hikariConfig = HikariConfigUtils.hikariConfig();
+        String host = "localhost";
+        String schema = "db_test_1";
+        Integer port = 3306;
+        String username = "root";
+        String password = null;
+        Boolean readOnly = false;
+        HikariConfig hikariConfig = HikariConfigUtils.hikariConfig(host, schema, port, username, password, readOnly);
         try (HikariDataSource dataSource = new HikariDataSource(hikariConfig)) {
             Jdbi jdbi = Jdbi.create(dataSource);
             jdbi.installPlugin(new SqlObjectPlugin());
             jdbi.useHandle(handle -> {
                 System.out.println("---");
-                handle.execute("create database if not exists `db_test_1`");
-                handle.execute("create table if not exists `db_test_1`.`tab_test_1`(`id` bigint(20) unsigned not null auto_increment, `name` varchar(255), primary key(`id`))");
+                handle.execute("create table if not exists `tab_test_1`(`id` bigint(20) unsigned not null auto_increment, `name` varchar(255), primary key(`id`))");
                 System.out.println("---");
                 List<Map<String, Object>> rows = handle.createQuery("show databases").mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
-                rows = handle.createQuery("show tables from `db_test_1`").mapToMap().list();
+                rows = handle.createQuery("show tables").mapToMap().list();
                 rows.stream().forEach(System.out::println);
                 System.out.println("---");
-                handle.createUpdate("truncate table `db_test_1`.`tab_test_1`").execute();
+                handle.createUpdate("truncate table `tab_test_1`").execute();
                 System.out.println("---");
                 TabTest1Dao tabTest1Dao = handle.attach(TabTest1Dao.class);
                 List<TabTest1> beans = Stream.of(new TabTest1(null, "aaa"), new TabTest1(null, "bbb")).collect(Collectors.toList());
